@@ -2,8 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateEmployee = exports.deleteEmployee = exports.createEmployee = exports.getEmployee = exports.getEmployees = void 0;
 const employeeModel_1 = require("./employeeModel");
+const sequelize_1 = require("sequelize");
 //import {v4 as uuidv4} from 'uuid';
 let employeeList = [];
+const sequelize = new sequelize_1.Sequelize({
+    host: '::1',
+    port: 3000,
+    dialect: 'postgres',
+    username: 'postgres',
+    password: 'postgres'
+});
+sequelize.authenticate().then(() => {
+    console.log("Connection to postgres successful");
+}).catch((err) => {
+    console.log("Unable to connect to postgres. Error: " + err);
+});
 const getEmployees = (req, res, next) => {
     if (employeeList.length <= 0) {
         res.send('No employees found');
