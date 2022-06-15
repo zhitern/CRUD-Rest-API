@@ -1,23 +1,10 @@
-import { JsonWebKeyInput } from "crypto";
 import { RequestHandler } from "express";
-import { Employee } from './employeeModel';
-import { Sequelize, DataType } from 'sequelize';
+import { EmployeeObj } from './employeeModel';
+import { sequelize } from '../app';
+
 //import {v4 as uuidv4} from 'uuid';
 
-let employeeList: Employee[] = [];
-const sequelize = new Sequelize({
-    host: '::1',
-    port: 3000,
-    dialect: 'postgres',
-    username: 'postgres',
-    password: 'postgres'
-})
-
-sequelize.authenticate().then(() => {
-    console.log("Connection to postgres successful");
-}).catch((err) => {
-    console.log("Unable to connect to postgres. Error: " + err);
-});
+let employeeList: EmployeeObj[] = [];
 
 export const getEmployees: RequestHandler = (req, res, next) => {
     if (employeeList.length <= 0) {
@@ -41,7 +28,7 @@ export const getEmployee: RequestHandler<{id: Number}> = (req, res, next) => {
 export const createEmployee: RequestHandler = (req, res, next) => {
     const employeeJSON = req.body;
     const uniqueID = Date.now();
-    const newEmployee = new Employee(uniqueID, employeeJSON.name, employeeJSON.salary, employeeJSON.dept);
+    const newEmployee = new EmployeeObj(uniqueID, employeeJSON.name, employeeJSON.salary, employeeJSON.dept);
 
     employeeList.push(newEmployee);
 
