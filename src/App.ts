@@ -1,24 +1,18 @@
-import * as express from "express";
+import express, { Request, Response, NextFunction } from "express";
+import { json } from 'body-parser';
+import employeeRoutes from "./employees/employeesRoutes";
 
-class App
-{
-    public express;
+const PORT = 3000;
+const app = express();
 
-    constructor()
-    {
-        this.express = express();
-        this.mountRoutes();
-    }
+app.use(json());
 
-    private mountRoutes(): void
-    {
-        const router = express.Router();
-        router.get('/', (req, res) => 
-        {
-            res.json({message: "Hello World!"});
-        })
-        this.express.use('/', router);
-    }
-}
+app.use('/employees', employeeRoutes);
 
-export default new App().express;
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    res.status(500).json({message: err.message});
+});
+
+app.listen(PORT, () => {
+    console.log(`Console listening at PORT:${PORT}`);
+});
