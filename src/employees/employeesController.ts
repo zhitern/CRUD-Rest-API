@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { Employee } from './employeeModel';
+import { Employee, employeeSchema } from './employeeModel';
 import { database } from '../database';
 import { Identifier } from "sequelize/types";
 
@@ -31,10 +31,21 @@ export const createEmployee: RequestHandler = (req, res, next) => {
     const employeeJSON = req.body;
     const uniqueID = Date.now();
 
-    const newEmployee = Employee.build({ 
+    const { error, value } = employeeSchema.validate({ 
         name: employeeJSON.name, 
         salary: employeeJSON.salary, 
         department: employeeJSON.department
+     });
+
+     if (error) {
+        res.send(error.message);
+        return;
+     }
+
+    const newEmployee = Employee.build({
+        name: value.name, 
+        salary: value.salary, 
+        department: value.department
     });
 
     newEmployee.save().then(() => {

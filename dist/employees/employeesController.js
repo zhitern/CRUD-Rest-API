@@ -14,7 +14,10 @@ exports.getEmployees = getEmployees;
 const getEmployee = (req, res, next) => {
     const id = req.params.id;
     employeeModel_1.Employee.findByPk(id).then((data) => {
-        res.json(data);
+        if (data)
+            res.json(data);
+        else
+            res.send("Employee not found");
     }).catch((err) => {
         res.send('Error retrieving employees data');
     });
@@ -23,10 +26,19 @@ exports.getEmployee = getEmployee;
 const createEmployee = (req, res, next) => {
     const employeeJSON = req.body;
     const uniqueID = Date.now();
-    const newEmployee = employeeModel_1.Employee.build({
+    const { error, value } = employeeModel_1.employeeSchema.validate({
         name: employeeJSON.name,
         salary: employeeJSON.salary,
         department: employeeJSON.department
+    });
+    if (error) {
+        res.send(error);
+        return;
+    }
+    const newEmployee = employeeModel_1.Employee.build({
+        name: value.name,
+        salary: value.salary,
+        department: value.department
     });
     newEmployee.save().then(() => {
         console.log("Connection to postgres successful");
@@ -63,7 +75,11 @@ const updateEmployee = (req, res, next) => {
             data.name = name;
             data.salary = salary;
             data.department = department;
-            data.save().then().catch();
+            data.save().then(() => {
+                res.send("Employee updated successfully \n" + data.toJSON());
+            }).catch((err) => {
+                res.send('Error retrieving employees data');
+            });
         }
         else {
             res.send("Employee not found");

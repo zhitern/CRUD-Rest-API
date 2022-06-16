@@ -1,5 +1,6 @@
 import { Model, DataTypes, CreationOptional } from 'sequelize';
 import { database } from '../database';
+import Joi from 'joi';
 
 enum Department {
     HR,
@@ -29,6 +30,22 @@ Employee.init({
     sequelize: database, 
     timestamps: false,
     modelName: 'Employee'
+});
+
+export const employeeSchema = Joi.object({
+    name: Joi.string()
+        .alphanum()
+        .min(3)
+        .max(30)
+        .required(),
+
+    salary: Joi.number()
+        .min(0)
+        .precision(2)
+        .sign("positive"),
+    
+    department: Joi.any()
+        .valid(['HR', 'PR'])
 });
 
 Employee.sync();

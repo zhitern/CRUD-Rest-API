@@ -1,8 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Employee = void 0;
+exports.employeeSchema = exports.Employee = void 0;
 const sequelize_1 = require("sequelize");
 const database_1 = require("../database");
+const joi_1 = __importDefault(require("joi"));
 var Department;
 (function (Department) {
     Department[Department["HR"] = 0] = "HR";
@@ -26,5 +30,17 @@ Employee.init({
     sequelize: database_1.database,
     timestamps: false,
     modelName: 'Employee'
+});
+exports.employeeSchema = joi_1.default.object({
+    name: joi_1.default.string()
+        .alphanum()
+        .min(3)
+        .max(30)
+        .required(),
+    salary: joi_1.default.number()
+        .min(0)
+        .precision(2),
+    department: joi_1.default.any()
+        .valid('HR', 'PS')
 });
 Employee.sync();
