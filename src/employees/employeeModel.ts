@@ -1,33 +1,34 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../app';
+import { Model, DataTypes, CreationOptional } from 'sequelize';
+import { database } from '../database';
 
 enum Department {
     HR,
     PS,
 }
 
-export class Employee extends Model {}
+export class Employee extends Model {
+    declare id: CreationOptional<Number>;
+    declare name: String;
+    declare salary: Number;
+    declare department: String;
+}
 
 Employee.init({
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
+        unique: true,
+        allowNull: false
     },
-    name: {
-        type: DataTypes.STRING
-    },
-    salary: {
-        type: DataTypes.INTEGER
-    },
-    department: {
-        type: DataTypes.STRING
-    }
-}, { sequelize, timestamps: false });
+    name: DataTypes.STRING,
+    salary: DataTypes.INTEGER,
+    department: DataTypes.STRING
+    
+}, { 
+    sequelize: database, 
+    timestamps: false,
+    modelName: 'Employee'
+});
 
 Employee.sync();
-
-export class EmployeeObj {
-    constructor (public id: Number, public name: String, public salary: Number, public department: Department){
-    }
-}
