@@ -34,12 +34,13 @@ Employee.init({
 exports.employeeSchema = joi_1.default.object({
     name: joi_1.default.string()
         .alphanum()
+        .allow('/', ',')
         .min(3)
-        .max(30)
-        .required(),
+        .max(30),
     salary: joi_1.default.number()
         .min(0)
-        .precision(2),
+        .precision(2)
+        .sign("positive"),
     department: joi_1.default.any()
         .valid('HR', 'PS')
 });

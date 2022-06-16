@@ -35,9 +35,9 @@ Employee.init({
 export const employeeSchema = Joi.object({
     name: Joi.string()
         .alphanum()
+        .allow('/', ',')
         .min(3)
-        .max(30)
-        .required(),
+        .max(30),
 
     salary: Joi.number()
         .min(0)
@@ -45,7 +45,7 @@ export const employeeSchema = Joi.object({
         .sign("positive"),
     
     department: Joi.any()
-        .valid(['HR', 'PR'])
+        .valid('HR', 'PS')
 });
 
 Employee.sync();

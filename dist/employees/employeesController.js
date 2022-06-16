@@ -30,9 +30,9 @@ const createEmployee = (req, res, next) => {
         name: employeeJSON.name,
         salary: employeeJSON.salary,
         department: employeeJSON.department
-    });
+    }, { presence: "required" });
     if (error) {
-        res.send(error);
+        res.send(error.message);
         return;
     }
     const newEmployee = employeeModel_1.Employee.build({
@@ -72,9 +72,18 @@ const updateEmployee = (req, res, next) => {
     employeeModel_1.Employee.findByPk(id).then((data) => {
         if (data) {
             const { name, salary, department } = req.body;
-            data.name = name;
-            data.salary = salary;
-            data.department = department;
+            const { error, value } = employeeModel_1.employeeSchema.validate({
+                name: name,
+                salary: salary,
+                department: department
+            });
+            if (error) {
+                res.send(error.message);
+                return;
+            }
+            data.name = value.name;
+            data.salary = value.salary;
+            data.department = value.department;
             data.save().then(() => {
                 res.send("Employee updated successfully \n" + data.toJSON());
             }).catch((err) => {

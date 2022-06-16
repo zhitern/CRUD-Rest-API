@@ -35,7 +35,7 @@ export const createEmployee: RequestHandler = (req, res, next) => {
         name: employeeJSON.name, 
         salary: employeeJSON.salary, 
         department: employeeJSON.department
-     });
+     }, {presence: "required"});
 
      if (error) {
         res.send(error.message);
@@ -82,9 +82,21 @@ export const updateEmployee: RequestHandler<{id: Identifier}> = (req, res, next)
     Employee.findByPk(id).then((data) => {
         if (data) {
             const {name, salary, department} = req.body;
-            data.name = name;
-            data.salary = salary;
-            data.department = department;
+
+            const { error, value } = employeeSchema.validate({ 
+                name: name,
+                salary: salary, 
+                department: department
+             });
+        
+             if (error) {
+                res.send(error.message);
+                return;
+             }
+
+            data.name = value.name;
+            data.salary = value.salary;
+            data.department = value.department;
 
             data.save().then(() => {
                 res.send("Employee updated successfully \n" + data.toJSON());
