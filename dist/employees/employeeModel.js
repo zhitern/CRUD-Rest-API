@@ -9,8 +9,8 @@ const database_1 = require("../database");
 const joi_1 = __importDefault(require("joi"));
 var Department;
 (function (Department) {
-    Department[Department["HR"] = 0] = "HR";
-    Department[Department["PS"] = 1] = "PS";
+    Department["HR"] = "HR";
+    Department["PS"] = "PS";
 })(Department || (Department = {}));
 class Employee extends sequelize_1.Model {
 }
@@ -42,6 +42,6 @@ exports.employeeSchema = joi_1.default.object({
         .precision(2)
         .sign("positive"),
     department: joi_1.default.any()
-        .valid('HR', 'PS')
+        .valid(Department.HR, Department.PS)
 });
 Employee.sync();

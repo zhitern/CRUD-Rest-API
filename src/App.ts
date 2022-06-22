@@ -1,9 +1,11 @@
 import express, { Request, Response, NextFunction } from "express";
 import { json } from 'body-parser';
-import employeeRoutes from "./employees/employeesRoutes";
 import { database } from "./database";
+import cors from 'cors';
 
-const PORT = 3000;
+import employeeRoutes from "./employees/employeesRoutes";
+
+const PORT = 3001;
 const app = express();
 
 database.authenticate().then(() => {
@@ -12,6 +14,7 @@ database.authenticate().then(() => {
     console.log("Unable to connect to postgres. Error: " + err);
 });
 
+app.use(cors());
 app.use(json());
 app.use('/employees', employeeRoutes);
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

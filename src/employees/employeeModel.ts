@@ -3,8 +3,8 @@ import { database } from '../database';
 import Joi from 'joi';
 
 enum Department {
-    HR,
-    PS,
+    HR = "HR",
+    PS = "PS",
 }
 
 export class Employee extends Model {
@@ -35,7 +35,7 @@ Employee.init({
 export const employeeSchema = Joi.object({
     name: Joi.string()
         .alphanum()
-        .allow('/', ',')
+        .allow('/', ',', ' ')
         .min(3)
         .max(30),
 
@@ -45,7 +45,7 @@ export const employeeSchema = Joi.object({
         .sign("positive"),
     
     department: Joi.any()
-        .valid('HR', 'PS')
+        .valid(Department.HR, Department.PS)
 });
 
 Employee.sync();
