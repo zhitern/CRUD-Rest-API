@@ -38,7 +38,7 @@ export const createEmployee: RequestHandler = (req, res, next) => {
      }, {presence: "required"});
 
      if (error) {
-        res.send(error.message);
+        res.status(400).send(error.message);
         return;
      }
 

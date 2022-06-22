@@ -34,7 +34,7 @@ Employee.init({
 exports.employeeSchema = joi_1.default.object({
     name: joi_1.default.string()
         .alphanum()
-        .allow('/', ',')
+        .allow('/', ',', ' ')
         .min(3)
         .max(30),
     salary: joi_1.default.number()

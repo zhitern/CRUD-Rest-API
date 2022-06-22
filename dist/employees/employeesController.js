@@ -32,7 +32,7 @@ const createEmployee = (req, res, next) => {
         department: employeeJSON.department
     }, { presence: "required" });
     if (error) {
-        res.send(error.message);
+        res.status(400).send(error.message);
         return;
     }
     const newEmployee = employeeModel_1.Employee.build({
