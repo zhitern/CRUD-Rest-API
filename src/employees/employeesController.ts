@@ -50,10 +50,10 @@ export const createEmployee: RequestHandler = (req, res, next) => {
 
     newEmployee.save().then(() => {
         console.log("Connection to postgres successful");
-        res.send(`Added to database:\n${newEmployee.toJSON()}`);
+        res.status(200).send(`Added to database:\n${newEmployee.toJSON()}`);
     }).catch((err) => {
         console.log("Unable to create Employee. Error: " + err);
-        res.send("Unable to create Employee. Error: " + err);
+        res.status(400).send(err.message);
     });
 }
 

@@ -45,7 +45,7 @@ const createEmployee = (req, res, next) => {
         res.send(`Added to database:\n${newEmployee.toJSON()}`);
     }).catch((err) => {
         console.log("Unable to create Employee. Error: " + err);
-        res.send("Unable to create Employee. Error: " + err);
+        res.status(400).send(err.message);
     });
 };
 exports.createEmployee = createEmployee;
