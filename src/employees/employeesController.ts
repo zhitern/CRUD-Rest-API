@@ -8,9 +8,9 @@ import { Identifier } from "sequelize/types";
 export const getEmployees: RequestHandler = (req, res, next) => {
 
     Employee.findAll().then((data) => {
-        res.json(data);
+        res.status(200).json(data);
     }).catch((err) => {
-        res.send('Error retrieving employees data');
+        res.status(500).send('Error retrieving employees data');
     });
 }
 
@@ -19,11 +19,11 @@ export const getEmployee: RequestHandler<{id: Identifier}> = (req, res, next) =>
     
     Employee.findByPk(id).then((data) => {
         if (data)
-            res.json(data);
+            res.status(200).json(data);
         else
-            res.send("Employee not found");
+            res.status(500).send("Employee not found");
     }).catch((err) => {
-        res.send('Error retrieving employees data');
+        res.status(500).send('Error retrieving employees data');
     });
 }
 
@@ -63,16 +63,16 @@ export const deleteEmployee: RequestHandler<{id: Identifier}> = (req, res, next)
     Employee.findByPk(id).then((data) => {
         if (data) {
             data.destroy().then(() => {
-                res.send('Employee deleted successfully');
+                res.status(204).send('Employee deleted successfully');
             }).catch((err) => {
-                res.send('Error deleting employees data ' + err);
+                res.status(500).send('Error deleting employees data ' + err);
             });
         }
         else {
-            res.send('Unalbe to retrieve employees data');
+            res.status(404).send('Unalbe to retrieve employees data');
         }
     }).catch((err) => {
-        res.send('Error retrieving employees data ' + err);
+        res.status(404).send('Error retrieving employees data ' + err);
     });
 }
 
@@ -90,7 +90,7 @@ export const updateEmployee: RequestHandler<{id: Identifier}> = (req, res, next)
              });
         
              if (error) {
-                res.send(error.message);
+                res.status(400).send(error.message);
                 return;
              }
 
@@ -99,109 +99,20 @@ export const updateEmployee: RequestHandler<{id: Identifier}> = (req, res, next)
             data.department = value.department;
 
             data.save().then(() => {
-                res.send("Employee updated successfully \n" + data.toJSON());
+                res.status(200).send("Employee updated successfully \n" + data.toJSON());
             }).catch((err) => {
-                res.send('Error retrieving employees data');
+                res.status(500).send('Error retrieving employees data');
             });
         }
         else {
-            res.send("Employee not found");
+            res.status(404).send("Employee not found");
         }
 
         
     }).catch((err) => {
-        res.send('Error retrieving employees data');
+        res.status(404).send('Error retrieving employees data');
     });
-
-    // const id = req.params.id;
-    // 
-
-    // const employee = employeeList.find((employee) => employee.id == id);
-
-    // if (employee) {
-    //     if (name) employee.name = name;
-    //     if (salary) employee.salary = salary;
-    //     if (department)  employee.department = department;
-
-    //     res.send('Employee updated');
-    // }
-    // else{
-    //     res.send('Employee not found');    
-    // }
 }
 
 
 
-
-
-
-// import { RequestHandler } from "express";
-// import { Employee, EmployeeObj } from './employeeModel';
-// import { sequelize } from '../app';
-
-// //import {v4 as uuidv4} from 'uuid';
-
-// let employeeList: EmployeeObj[] = [];
-
-// export const getEmployees: RequestHandler = (req, res, next) => {
-//     if (employeeList.length <= 0) {
-//         res.send('No employees found');
-//     }
-//     else {
-//         res.json({employees: employeeList});
-//     }
-// }
-
-// export const getEmployee: RequestHandler<{id: Number}> = (req, res, next) => { 
-//     const id = req.params.id;
-
-//     const foundEmployee = employeeList.find((employee) => employee.id == id);
-//     if (foundEmployee)
-//         res.send(foundEmployee);
-//     else
-//         res.send("Employee not found");
-// }
-
-// export const createEmployee: RequestHandler = (req, res, next) => {
-//     const employeeJSON = req.body;
-//     const uniqueID = Date.now();
-//     const newEmployee = new EmployeeObj(uniqueID, employeeJSON.name, employeeJSON.salary, employeeJSON.department);
-
-//     const test = Employee.build({ name: employeeJSON.name, salary: employeeJSON.salary, department: employeeJSON.department});
-//     res.send(test.name);
-//     // test.save().then(() => {
-//     //     console.log("Connection to postgres successful");
-//     //     res.send(`Employee with name ${newEmployee.name} added to the database`);
-//     // }).catch((err) => {
-//     //     console.log("Unable to create Employee. Error: " + err);
-//     //     res.send("Unable to create Employee. Error: " + err);
-//     // });
-
-//     employeeList.push(newEmployee);
-// }
-
-// export const deleteEmployee: RequestHandler<{id: Number}> = (req, res, next) => {
-//     const id = req.params.id;
-
-//     employeeList = employeeList.filter((employee) => employee.id != id);
-
-//     res.send(`employee with the id ${id} deleted from the database`)
-// }
-
-// export const updateEmployee: RequestHandler<{id: Number}> = (req, res, next) => {
-//     const id = req.params.id;
-//     const {name, salary, department} = req.body;
-
-//     const employee = employeeList.find((employee) => employee.id == id);
-
-//     if (employee) {
-//         if (name) employee.name = name;
-//         if (salary) employee.salary = salary;
-//         if (department)  employee.department = department;
-
-//         res.send('Employee updated');
-//     }
-//     else{
-//         res.send('Employee not found');    
-//     }
-// }
