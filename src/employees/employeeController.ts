@@ -29,7 +29,6 @@ export const getEmployee: RequestHandler<{id: Identifier}> = (req, res, next) =>
 
 export const createEmployee: RequestHandler = (req, res, next) => {
     const employeeJSON = req.body;
-    const uniqueID = Date.now();
 
     const { error, value } = employeeSchema.validate({ 
         name: employeeJSON.name, 

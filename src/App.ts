@@ -3,7 +3,8 @@ import { json } from 'body-parser';
 import { database } from "./database";
 import cors from 'cors';
 
-import employeeRoutes from "./employees/employeesRoutes";
+import employeeRoutes from "./employees/employeeRoutes";
+import userRoutes from "./user/userRoutes"
 
 const PORT = 3001;
 const app = express();
@@ -17,6 +18,7 @@ database.authenticate().then(() => {
 app.use(cors());
 app.use(json());
 app.use('/employees', employeeRoutes);
+app.use('/users', userRoutes);
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500).json({message: err.message});
 });

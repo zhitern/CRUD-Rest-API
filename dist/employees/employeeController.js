@@ -25,7 +25,6 @@ const getEmployee = (req, res, next) => {
 exports.getEmployee = getEmployee;
 const createEmployee = (req, res, next) => {
     const employeeJSON = req.body;
-    const uniqueID = Date.now();
     const { error, value } = employeeModel_1.employeeSchema.validate({
         name: employeeJSON.name,
         salary: employeeJSON.salary,
