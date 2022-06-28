@@ -3,8 +3,8 @@ import { database } from '../database';
 import Joi from 'joi';
 
 export class User extends Model {
-    declare userId: String;
-    declare password: String;
+    declare userId: string;
+    declare password: string;
 }
 
 User.init({

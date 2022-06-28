@@ -3,6 +3,8 @@ import { User, userSchema } from './userModel';
 import { database } from '../database';
 import { Identifier } from "sequelize/types";
 
+import bcrypt from "bcryptjs"
+
 //import {v4 as uuidv4} from 'uuid'
 
 // export const getEmployees: RequestHandler = (req, res, next) => {
@@ -36,20 +38,25 @@ export const Register: RequestHandler = async (req, res, next) => {
      }, {presence: "required"});
 
      if (error) {
+        console.log("validation faield: " + error.message);
         res.status(400).send(error.message);
         return;
      }
 
     const userFound = await User.findByPk(userJSON.userId);
 
-    if (userFound !== undefined) {
+    if (userFound !== null) {
+        console.log("UserId already exist");
         res.status(400).send("UserId already exist");
         return;
     }
 
+    const salt = bcrypt.genSaltSync();
+    const hash = bcrypt.hashSync(userJSON.password, salt);
+
     const newUser = User.build({
-        userId: value.userId, 
-        password: value.password,
+        userId: value.userId,
+        password: hash,
     });
 
     newUser.save().then(() => {
@@ -68,8 +75,8 @@ export const LogIn: RequestHandler = (req, res, next) => {
             res.status(500).send("UserId not found");
             return;
         }
-            
-        if (userJSON.password === data?.password) {
+
+        if (bcrypt.compareSync(userJSON.password, data?.password)) {
             res.status(200).send("Approved");
         }
         else {

@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogIn = exports.Register = void 0;
 const userModel_1 = require("./userModel");
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 //import {v4 as uuidv4} from 'uuid'
 // export const getEmployees: RequestHandler = (req, res, next) => {
 //     Employee.findAll().then((data) => {
@@ -37,17 +41,21 @@ const Register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         password: userJSON.password,
     }, { presence: "required" });
     if (error) {
+        console.log("validation faield: " + error.message);
         res.status(400).send(error.message);
         return;
     }
     const userFound = yield userModel_1.User.findByPk(userJSON.userId);
-    if (userFound !== undefined) {
+    if (userFound !== null) {
+        console.log("UserId already exist");
         res.status(400).send("UserId already exist");
         return;
     }
+    const salt = bcryptjs_1.default.genSaltSync();
+    const hash = bcryptjs_1.default.hashSync(userJSON.password, salt);
     const newUser = userModel_1.User.build({
         userId: value.userId,
-        password: value.password,
+        password: hash,
     });
     newUser.save().then(() => {
         res.status(200).send(`Registered Successfully:\n${newUser.userId}`);
@@ -64,7 +72,7 @@ const LogIn = (req, res, next) => {
             res.status(500).send("UserId not found");
             return;
         }
-        if (userJSON.password === (data === null || data === void 0 ? void 0 : data.password)) {
+        if (bcryptjs_1.default.compareSync(userJSON.password, data === null || data === void 0 ? void 0 : data.password)) {
             res.status(200).send("Approved");
         }
         else {
