@@ -57,13 +57,12 @@ export const createEmployee: RequestHandler = (req, res, next) => {
 }
 
 export const deleteEmployee: RequestHandler<{id: Identifier}> = (req, res, next) => {
-    const id = req.params.id;   
+    const _id = req.params.id;   
     
-    Employee.findByPk(id).then((data) => {
+    Employee.findByPk(_id).then((data) => {
         if (data) {
-            const tempData = data;
             data.destroy().then(() => {
-                res.status(204).json(tempData);
+                res.status(200).json({id: _id});
             }).catch((err) => {
                 res.status(500).send('Error deleting employees data ' + err);
             });

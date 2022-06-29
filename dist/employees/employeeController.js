@@ -41,7 +41,7 @@ const createEmployee = (req, res, next) => {
     });
     newEmployee.save().then(() => {
         console.log("Connection to postgres successful");
-        res.status(200).send(`Added to database:\n${newEmployee.toJSON()}`);
+        res.status(200).json(newEmployee.toJSON());
     }).catch((err) => {
         console.log("Unable to create Employee. Error: " + err);
         res.status(400).send(err.message);
@@ -49,11 +49,11 @@ const createEmployee = (req, res, next) => {
 };
 exports.createEmployee = createEmployee;
 const deleteEmployee = (req, res, next) => {
-    const id = req.params.id;
-    employeeModel_1.Employee.findByPk(id).then((data) => {
+    const _id = req.params.id;
+    employeeModel_1.Employee.findByPk(_id).then((data) => {
         if (data) {
             data.destroy().then(() => {
-                res.status(204).send('Employee deleted successfully');
+                res.status(200).json({ id: _id });
             }).catch((err) => {
                 res.status(500).send('Error deleting employees data ' + err);
             });
@@ -84,7 +84,7 @@ const updateEmployee = (req, res, next) => {
             data.salary = value.salary;
             data.department = value.department;
             data.save().then(() => {
-                res.status(200).send("Employee updated successfully \n" + data.toJSON());
+                res.status(200).json(data.toJSON());
             }).catch((err) => {
                 res.status(500).send('Error retrieving employees data');
             });
