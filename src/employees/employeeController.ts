@@ -49,7 +49,7 @@ export const createEmployee: RequestHandler = (req, res, next) => {
 
     newEmployee.save().then(() => {
         console.log("Connection to postgres successful");
-        res.status(200).send(`Added to database:\n${newEmployee.toJSON()}`);
+        res.status(200).json(newEmployee.toJSON());
     }).catch((err) => {
         console.log("Unable to create Employee. Error: " + err);
         res.status(400).send(err.message);
@@ -61,8 +61,9 @@ export const deleteEmployee: RequestHandler<{id: Identifier}> = (req, res, next)
     
     Employee.findByPk(id).then((data) => {
         if (data) {
+            const tempData = data;
             data.destroy().then(() => {
-                res.status(204).send('Employee deleted successfully');
+                res.status(204).json(tempData);
             }).catch((err) => {
                 res.status(500).send('Error deleting employees data ' + err);
             });
@@ -98,7 +99,7 @@ export const updateEmployee: RequestHandler<{id: Identifier}> = (req, res, next)
             data.department = value.department;
 
             data.save().then(() => {
-                res.status(200).send("Employee updated successfully \n" + data.toJSON());
+                res.status(200).json(data.toJSON());
             }).catch((err) => {
                 res.status(500).send('Error retrieving employees data');
             });

@@ -4,6 +4,9 @@ import { database } from '../database';
 import { Identifier } from "sequelize/types";
 
 import bcrypt from "bcryptjs"
+import * as jwt from "jsonwebtoken"
+
+const secretKey = "test";
 
 //import {v4 as uuidv4} from 'uuid'
 
@@ -72,20 +75,40 @@ export const LogIn: RequestHandler = (req, res, next) => {
     
     User.findByPk(userJSON.userId).then((data) => {
         if (!data){
+            console.log('UserId not found, data is null');
             res.status(500).send("UserId not found");
             return;
         }
 
         if (bcrypt.compareSync(userJSON.password, data?.password)) {
-            res.status(200).send("Approved");
+            const token = jwt.sign({userId: userJSON.userId}, secretKey, {algorithm:'HS256', expiresIn: '900s'});
+
+            res.status(200).json({token: token});
         }
         else {
+            console.log('Wrong password');
             res.status(500).send("Wrong Password");
         }
     }).catch((err) => {
-        res.status(500).send('UserId not found');
+        console.log('error caught, UserId not found: ' + err.message);
+        res.status(500).send('UserId not found: ' + err.message);
     });
 }
+
+export const authenticate:RequestHandler = (req, res, nex) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) return res.sendStatus(401);
+
+    jwt.verify(token, secretKey, (err, user) => {
+        if (err) return res.sendStatus(403);
+        nex();
+    })
+}
+// export const authenticate(req) {
+    
+// }
 
 // export const deleteEmployee: RequestHandler<{id: Identifier}> = (req, res, next) => {
 //     const id = req.params.id;   
