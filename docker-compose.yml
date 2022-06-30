@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  backend:
+    container_name: employeeapi
+    build: .
+    restart: always
+    ports:
+      - '8080:3001'
+    depends_on:
+      - database
+    volumes:
+      - .:/usr/app
+  database:
+    container_name: database
+    image: postgres:12.6-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports: 
+      - '5432:5432'
+    volumes: 
+      - data:/lib/db
+
+volumes:
+  data: {}
