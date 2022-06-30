@@ -81,7 +81,7 @@ export const LogIn: RequestHandler = (req, res, next) => {
         }
 
         if (bcrypt.compareSync(userJSON.password, data?.password)) {
-            const token = jwt.sign({userId: userJSON.userId}, secretKey, {algorithm:'HS256', expiresIn: '900s'});
+            const token = jwt.sign({userId: userJSON.userId}, secretKey, {algorithm:'HS256', expiresIn: '15m'});
 
             res.status(200).json({token: token});
         }
