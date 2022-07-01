@@ -6,12 +6,12 @@ import { Identifier } from "sequelize/types";
 import bcrypt from "bcryptjs"
 import * as jwt from "jsonwebtoken"
 
-const secretKey = process.env.SECRET_KEY;
+const secretKey = "test";//process.env.SECRET_KEY;
 
 export const Register: RequestHandler = async (req, res, next) => {
     const userJSON = req.body;
 
-    const { error, value } = userSchema.validate({ 
+    const { error, value } = userSchema.validate({
         userId: userJSON.userId, 
         password: userJSON.password, 
      }, {presence: "required"});
@@ -39,7 +39,7 @@ export const Register: RequestHandler = async (req, res, next) => {
     });
 
     newUser.save().then(() => {
-        res.status(200).send(`Registered Successfully:\n${newUser.userId}`);
+        res.status(200).json(newUser.toJSON());
     }).catch((err) => {
         console.log("Unable to Register. Error: " + err);
         res.status(400).send(err.message);
@@ -57,7 +57,7 @@ export const LogIn: RequestHandler = (req, res, next) => {
         }
 
         if (bcrypt.compareSync(userJSON.password, data?.password)) {
-            const token = jwt.sign({userId: userJSON.userId}, secretKey as string, {algorithm:'HS256', expiresIn: '15m'});
+            const token = jwt.sign({userId: userJSON.userId}, secretKey as jwt.Secret, {algorithm:'HS256', expiresIn: '15m'});
 
             res.status(200).json({token: token});
         }
@@ -77,7 +77,7 @@ export const authenticate:RequestHandler = (req, res, nex) => {
 
     if (token == null) return res.sendStatus(401);
 
-    jwt.verify(token, secretKey as string, (err, user) => {
+    jwt.verify(token, secretKey as jwt.Secret, (err, user) => {
         if (err) return res.sendStatus(403);
         nex();
     })
