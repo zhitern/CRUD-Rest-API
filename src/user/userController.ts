@@ -6,31 +6,7 @@ import { Identifier } from "sequelize/types";
 import bcrypt from "bcryptjs"
 import * as jwt from "jsonwebtoken"
 
-const secretKey = "test";
-
-//import {v4 as uuidv4} from 'uuid'
-
-// export const getEmployees: RequestHandler = (req, res, next) => {
-
-//     Employee.findAll().then((data) => {
-//         res.status(200).json(data);
-//     }).catch((err) => {
-//         res.status(500).send('Error retrieving employees data');
-//     });
-// }
-
-// export const getEmployee: RequestHandler<{id: Identifier}> = (req, res, next) => { 
-//     const id = req.params.id;   
-    
-//     Employee.findByPk(id).then((data) => {
-//         if (data)
-//             res.status(200).json(data);
-//         else
-//             res.status(500).send("Employee not found");
-//     }).catch((err) => {
-//         res.status(500).send('Error retrieving employees data');
-//     });
-// }
+const secretKey = process.env.SECRET_KEY;
 
 export const Register: RequestHandler = async (req, res, next) => {
     const userJSON = req.body;
@@ -81,7 +57,7 @@ export const LogIn: RequestHandler = (req, res, next) => {
         }
 
         if (bcrypt.compareSync(userJSON.password, data?.password)) {
-            const token = jwt.sign({userId: userJSON.userId}, secretKey, {algorithm:'HS256', expiresIn: '15m'});
+            const token = jwt.sign({userId: userJSON.userId}, secretKey as string, {algorithm:'HS256', expiresIn: '15m'});
 
             res.status(200).json({token: token});
         }
@@ -101,71 +77,8 @@ export const authenticate:RequestHandler = (req, res, nex) => {
 
     if (token == null) return res.sendStatus(401);
 
-    jwt.verify(token, secretKey, (err, user) => {
+    jwt.verify(token, secretKey as string, (err, user) => {
         if (err) return res.sendStatus(403);
         nex();
     })
 }
-// export const authenticate(req) {
-    
-// }
-
-// export const deleteEmployee: RequestHandler<{id: Identifier}> = (req, res, next) => {
-//     const id = req.params.id;   
-    
-//     Employee.findByPk(id).then((data) => {
-//         if (data) {
-//             data.destroy().then(() => {
-//                 res.status(204).send('Employee deleted successfully');
-//             }).catch((err) => {
-//                 res.status(500).send('Error deleting employees data ' + err);
-//             });
-//         }
-//         else {
-//             res.status(404).send('Unalbe to retrieve employees data');
-//         }
-//     }).catch((err) => {
-//         res.status(404).send('Error retrieving employees data ' + err);
-//     });
-// }
-
-// export const updateEmployee: RequestHandler<{id: Identifier}> = (req, res, next) => {
-//     const id = req.params.id;
-    
-//     Employee.findByPk(id).then((data) => {
-//         if (data) {
-//             const {name, salary, department} = req.body;
-
-//             const { error, value } = employeeSchema.validate({ 
-//                 name: name,
-//                 salary: salary, 
-//                 department: department
-//              });
-        
-//              if (error) {
-//                 res.status(400).send(error.message);
-//                 return;
-//              }
-
-//             data.name = value.name;
-//             data.salary = value.salary;
-//             data.department = value.department;
-
-//             data.save().then(() => {
-//                 res.status(200).send("Employee updated successfully \n" + data.toJSON());
-//             }).catch((err) => {
-//                 res.status(500).send('Error retrieving employees data');
-//             });
-//         }
-//         else {
-//             res.status(404).send("Employee not found");
-//         }
-
-        
-//     }).catch((err) => {
-//         res.status(404).send('Error retrieving employees data');
-//     });
-// }
-
-
-

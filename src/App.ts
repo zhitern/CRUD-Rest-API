@@ -2,12 +2,16 @@ import express, { Request, Response, NextFunction } from "express";
 import { json } from 'body-parser';
 import { database } from "./database";
 import cors from 'cors';
+import * as dotenv from 'dotenv';
 
 import employeeRoutes from "./employees/employeeRoutes";
 import userRoutes from "./user/userRoutes"
 
-const PORT = 3001;
+dotenv.config();
+
+const PORT = parseInt(process.env.PORT as string);
 const app = express();
+
 
 database.authenticate().then(() => {
     console.log("Connection to postgres successful");
