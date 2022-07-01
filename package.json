@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon src/app.ts"
+    "build": "tsc",
+    "start": "npm run build && nodemon dist/app.js"
   },
   "repository": {
     "type": "git",

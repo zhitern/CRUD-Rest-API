@@ -39,26 +39,7 @@ exports.authenticate = exports.LogIn = exports.Register = void 0;
 const userModel_1 = require("./userModel");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jwt = __importStar(require("jsonwebtoken"));
-const secretKey = "test";
-//import {v4 as uuidv4} from 'uuid'
-// export const getEmployees: RequestHandler = (req, res, next) => {
-//     Employee.findAll().then((data) => {
-//         res.status(200).json(data);
-//     }).catch((err) => {
-//         res.status(500).send('Error retrieving employees data');
-//     });
-// }
-// export const getEmployee: RequestHandler<{id: Identifier}> = (req, res, next) => { 
-//     const id = req.params.id;   
-//     Employee.findByPk(id).then((data) => {
-//         if (data)
-//             res.status(200).json(data);
-//         else
-//             res.status(500).send("Employee not found");
-//     }).catch((err) => {
-//         res.status(500).send('Error retrieving employees data');
-//     });
-// }
+const secretKey = "test"; //process.env.SECRET_KEY;
 const Register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userJSON = req.body;
     const { error, value } = userModel_1.userSchema.validate({
@@ -83,7 +64,7 @@ const Register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         password: hash,
     });
     newUser.save().then(() => {
-        res.status(200).send(`Registered Successfully:\n${newUser.userId}`);
+        res.status(200).json(newUser.toJSON());
     }).catch((err) => {
         console.log("Unable to Register. Error: " + err);
         res.status(400).send(err.message);
@@ -99,7 +80,7 @@ const LogIn = (req, res, next) => {
             return;
         }
         if (bcryptjs_1.default.compareSync(userJSON.password, data === null || data === void 0 ? void 0 : data.password)) {
-            const token = jwt.sign({ userId: userJSON.userId }, secretKey, { algorithm: 'HS256', expiresIn: '900s' });
+            const token = jwt.sign({ userId: userJSON.userId }, secretKey, { algorithm: 'HS256', expiresIn: '15m' });
             res.status(200).json({ token: token });
         }
         else {
@@ -124,52 +105,3 @@ const authenticate = (req, res, nex) => {
     });
 };
 exports.authenticate = authenticate;
-// export const authenticate(req) {
-// }
-// export const deleteEmployee: RequestHandler<{id: Identifier}> = (req, res, next) => {
-//     const id = req.params.id;   
-//     Employee.findByPk(id).then((data) => {
-//         if (data) {
-//             data.destroy().then(() => {
-//                 res.status(204).send('Employee deleted successfully');
-//             }).catch((err) => {
-//                 res.status(500).send('Error deleting employees data ' + err);
-//             });
-//         }
-//         else {
-//             res.status(404).send('Unalbe to retrieve employees data');
-//         }
-//     }).catch((err) => {
-//         res.status(404).send('Error retrieving employees data ' + err);
-//     });
-// }
-// export const updateEmployee: RequestHandler<{id: Identifier}> = (req, res, next) => {
-//     const id = req.params.id;
-//     Employee.findByPk(id).then((data) => {
-//         if (data) {
-//             const {name, salary, department} = req.body;
-//             const { error, value } = employeeSchema.validate({ 
-//                 name: name,
-//                 salary: salary, 
-//                 department: department
-//              });
-//              if (error) {
-//                 res.status(400).send(error.message);
-//                 return;
-//              }
-//             data.name = value.name;
-//             data.salary = value.salary;
-//             data.department = value.department;
-//             data.save().then(() => {
-//                 res.status(200).send("Employee updated successfully \n" + data.toJSON());
-//             }).catch((err) => {
-//                 res.status(500).send('Error retrieving employees data');
-//             });
-//         }
-//         else {
-//             res.status(404).send("Employee not found");
-//         }
-//     }).catch((err) => {
-//         res.status(404).send('Error retrieving employees data');
-//     });
-// }

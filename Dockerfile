@@ -8,8 +8,6 @@ COPY package*.json ./
 
 # Installing project dependencies
 RUN npm install
-RUN npm install -g nodemon
-RUN npm install -g ts-node
 
 COPY . .
 EXPOSE 3001
