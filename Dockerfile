@@ -11,5 +11,5 @@ RUN npm install
 
 COPY . .
 EXPOSE 3001
-# Running default command 
+# Running default command
 CMD ["npm", "start"]
